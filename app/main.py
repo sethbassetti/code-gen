@@ -21,10 +21,10 @@ from utils import get_base_url
 from aitextgen import aitextgen
 
 # load up a model from memory. Note you may not need all of these options.
-# ai = aitextgen(model_folder="model/",
-#                tokenizer_file="model/aitextgen.tokenizer.json", to_gpu=False)
+ai = aitextgen(model_folder="model/",
+            tokenizer_file="model/aitextgen.tokenizer.json", to_gpu=False)
 
-ai = aitextgen(model="distilgpt2", to_gpu=False)
+#ai = aitextgen(model="distilgpt2", to_gpu=False)
 
 # setup the webserver
 # port may need to be changed if there are multiple flask servers running on same server
@@ -45,7 +45,7 @@ app.secret_key = os.urandom(64)
 
 @app.route(f'{base_url}')
 def home():
-    return render_template('writer_home.html', generated=None)
+    return render_template('index.html', generated=None)
 
 
 @app.route(f'{base_url}', methods=['POST'])
@@ -57,9 +57,9 @@ def home_post():
 def results():
     if 'data' in session:
         data = session['data']
-        return render_template('Write-your-story-with-AI.html', generated=data)
+        return render_template('index.html', generated=data)
     else:
-        return render_template('Write-your-story-with-AI.html', generated=None)
+        return render_template('index.html', generated=None)
 
 
 @app.route(f'{base_url}/generate_text/', methods=["POST"])
@@ -72,9 +72,9 @@ def generate_text():
     if prompt is not None:
         generated = ai.generate(
             n=1,
-            batch_size=3,
+            batch_size=1,
             prompt=str(prompt),
-            max_length=300,
+            max_length=100,
             temperature=0.9,
             return_as_list=True
         )
@@ -92,7 +92,7 @@ def generate_text():
 
 if __name__ == '__main__':
     # IMPORTANT: change url to the site where you are editing this file.
-    website_url = 'coding.ai-camp.dev'
+    website_url = 'cocalcg27.ai-camp.dev'
 
     print(f'Try to open\n\n    https://{website_url}' + base_url + '\n\n')
     app.run(host='0.0.0.0', port=port, debug=True)
